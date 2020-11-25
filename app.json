@@ -1,0 +1,12 @@
+{
+  "name": "mychatapp",
+  "displayName": "mychatapp",
+  "expo": {
+    "name": "mychatapp",
+    "slug": "mychatapp",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
