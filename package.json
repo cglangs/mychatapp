@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@apollo/client": "^3.2.9",
+    "@react-navigation/native": "^5.8.10",
+    "@react-navigation/stack": "^5.12.8",
     "apollo-client": "^2.6.10",
     "apollo-link-http": "^1.5.17",
     "expo": "~39.0.2",

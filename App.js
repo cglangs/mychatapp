@@ -1,44 +1,31 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import React, { Component } from 'react'
-import gql from 'graphql-tag';
-import {Query} from 'react-apollo';
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomeScreen from './HomeScreen'
 
 
 
-const HELLO_WORD = gql`
-query hello_world {
-  hello
-}
-`
+const Stack = createStackNavigator();
+
 
 class App extends Component {
   render (){
     return (
-      <Query query={HELLO_WORD}>
-      {({ loading, error, data, refetch }) => {
-        if (loading) return <div>Fetching</div>
-        if (error) return <div>error</div>
-        return(
-          <View style={styles.container}>
-          <Text>{data.hello}</Text>
-          <StatusBar style="auto" />
-          </View>
-        )
-      }}
-      </Query>
-
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ title: 'Welcome' }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default App
