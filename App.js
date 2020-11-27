@@ -1,14 +1,35 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import React, { Component } from 'react'
+import gql from 'graphql-tag';
+import {Query} from 'react-apollo';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>La Mer de Chine</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+
+
+const HELLO_WORD = gql`
+query hello_world {
+  hello
+}
+`
+
+class App extends Component {
+  render (){
+    return (
+      <Query query={HELLO_WORD}>
+      {({ loading, error, data, refetch }) => {
+        if (loading) return <div>Fetching</div>
+        if (error) return <div>error</div>
+        return(
+          <View style={styles.container}>
+          <Text>{data.hello}</Text>
+          <StatusBar style="auto" />
+          </View>
+        )
+      }}
+      </Query>
+
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -19,3 +40,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default App

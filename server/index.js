@@ -1,6 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const {ApolloServer, gql} = = require('apollo-server-express')
+const {ApolloServer, gql} = require('apollo-server-express')
 const cors = require('cors');
 const app = express();
 
@@ -20,29 +20,30 @@ const resolvers = {
 }
 
 var corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'http://localhost:19006',
   credentials: true // <-- REQUIRED backend setting
 };
 
-app.use(cors(corsOptions));
+//app.use(cors(corsOptions));
 
 //app.use(cookieParser())
-
 
 const server = new ApolloServer({
   introspection: true,
   playground: true,
   typeDefs: schema,
+  resolvers,
   context: ({ req }) => {
     return {
-      models,
       req
     };
   }
 });
 
 
-server.applyMiddleware({ app });
+//server.applyMiddleware({ app });
+server.applyMiddleware({ app, cors: corsOptions });
+
 
 const port = process.env.PORT || 3003;
 

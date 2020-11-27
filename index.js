@@ -1,24 +1,42 @@
 import { registerRootComponent } from 'expo';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import React from 'react';
+import { ApolloClient, InMemoryCache} from '@apollo/client';
+import {ApolloProvider } from 'react-apollo'
+import React, { Component } from 'react'
+import { createHttpLink } from 'apollo-link-http'
+import Constants from "expo-constants";
 
+const { manifest } = Constants;
+
+console.log(manifest)
 
 import App from './App';
 
-// Initialize Apollo Client
-const client = new ApolloClient({
-  uri: 'localhost:4000/graphql',
-  cache: new InMemoryCache()
-});
+const httpLink = createHttpLink({
+  uri: 'http://0.0.0.0:3003/graphql',
+  credentials: 'include'
+})
 
-const rootComp = () => (
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider>
-);
+
+const client = new ApolloClient({
+  link: httpLink,
+  cache: new InMemoryCache()
+})
+
+
+class AppContainer extends Component {
+  render() {
+    return (
+      <ApolloProvider client={client}>
+        <App />
+      </ApolloProvider>
+    );
+  }
+}
+
+
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
 // It also ensures that whether you load the app in the Expo client or in a native build,
 // the environment is set up appropriately
+registerRootComponent(AppContainer);
 
-registerRootComponent(rootComp);
