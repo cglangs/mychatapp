@@ -3,11 +3,6 @@ import { ApolloClient, InMemoryCache} from '@apollo/client';
 import {ApolloProvider } from 'react-apollo'
 import React, { Component } from 'react'
 import { createHttpLink } from 'apollo-link-http'
-import Constants from "expo-constants";
-
-const { manifest } = Constants;
-
-console.log(manifest)
 
 import App from './App';
 
