@@ -72,7 +72,7 @@ class Login extends Component {
       var token = jwt_decode(data.CreateUser.token)
       const items = [['userId', token.userId], ['role', token.role]]
       await AsyncStorage.multiSet(items)
-
+      this.props.navigation.navigate('Home', {user: {userId: token.userId, role:  token.role}})
   }
 }
 
