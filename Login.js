@@ -69,14 +69,10 @@ class Login extends Component {
   }
 
    async _confirm(data) {
-      console.log(jwt_decode(data.CreateUser.token))
+      var token = jwt_decode(data.CreateUser.token)
+      const items = [['userId', token.userId], ['role', token.role]]
+      await AsyncStorage.multiSet(items)
 
-      /*await AsyncStorage.setItem(
-      'TOKEN',
-      data.CreateUser.token
-    );
-     const value = await AsyncStorage.getItem('TOKEN');
-     console.log(value)*/
   }
 }
 
