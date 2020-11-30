@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken')
 const { ACCESS_SECRET, REFRESH_SECRET, getUserId } = require('./utils')
 
 
+
 const app = express();
 mongoose.connect('mongodb://localhost/mychatdb', {useNewUrlParser: true});
 

@@ -3,31 +3,14 @@ import { StyleSheet, Text, View, TextInput, Button} from 'react-native';
 import React, { Component } from 'react'
 import gql from 'graphql-tag';
 import {Query, Mutation} from 'react-apollo';
-/*
-      <Query query={HELLO_WORD}>
-        {({ loading, error, data, refetch }) => {
-        if (loading) return <Text>Fetching</Text>
-        if (error) return <Text>error</Text>
-        return(
-          <View>
-          <Text>{data.hello}</Text>
-          </View>
-        )
-      }}
-      </Query>
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from 'jwt-decode';
 
-*/
 
 
 const SIGNUP_MUTATION = gql`
   mutation SignupMutation($email: String!, $password: String!, $user_name: String!, $role: String!) {
     CreateUser(email: $email, password: $password, user_name: $user_name, role: $role) {
-      user{
-        user_name
-        email
-        password
-        role
-      }
       token
     }
   }
@@ -85,8 +68,15 @@ class Login extends Component {
     )
   }
 
-   _confirm(data) {
-    console.log(data)
+   async _confirm(data) {
+      console.log(jwt_decode(data.CreateUser.token))
+
+      /*await AsyncStorage.setItem(
+      'TOKEN',
+      data.CreateUser.token
+    );
+     const value = await AsyncStorage.getItem('TOKEN');
+     console.log(value)*/
   }
 }
 
