@@ -24,12 +24,13 @@ class Login extends Component {
     this.state = {
       user_name: '',
       email: '',
-      password: ''
+      password: '',
+      isLogin: true
     }
   }
 
   render (){
-    const {email, password, user_name} = this.state
+    const { isLogin,email, password, user_name} = this.state
     return (
       <View  style={styles.container}>
       <Text>Login Page</Text>
@@ -48,6 +49,10 @@ class Login extends Component {
       onChangeText={text => this.setState({password: text})}
       value={this.state.password}
       />
+      <Button
+      title={isLogin ? 'need to create an account?' : 'already have an account?'}
+      onPress={() => this.setState({ isLogin: !this.state.isLogin })}
+      />
       <Mutation
         mutation={SIGNUP_MUTATION}
         variables={{ email, password, user_name, role: "STUDENT"}}
@@ -57,7 +62,7 @@ class Login extends Component {
         {(mutation, { loading, error }) => (
           <View>
           <Button
-          title="Sign Up"
+          title={isLogin ? 'Login' : 'Signup'}
           onPress={() => mutation()
           } 
           />

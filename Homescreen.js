@@ -25,7 +25,7 @@ class HomeScreen extends Component {
       this.setUser(this.props.route.params.user)
     }
   }
-  
+
   async logoutUser(){
     await AsyncStorage.multiRemove(['userId', 'role'])
     this.setState(this.baseState)
@@ -42,14 +42,12 @@ class HomeScreen extends Component {
   }
 
   render (){
-
     return (
       <View  style={styles.container}>
       <Button
         title={this.state.user.userId ? "Logout" : "Login"}
         onPress={() =>{this.state.user.userId ? this.logoutUser() : this.props.navigation.navigate('Login')}} 
       />
-
       </View>
     )
   }
