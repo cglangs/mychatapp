@@ -16,6 +16,14 @@ const SIGNUP_MUTATION = gql`
   }
 `
 
+const LOGIN_MUTATION = gql`
+  mutation LoginMutation($email: String!, $password: String!) {
+    Login(email: $email, password: $password) {
+      token
+    }
+  }
+`
+
 class Login extends Component {
 
 
@@ -54,7 +62,7 @@ class Login extends Component {
       onPress={() => this.setState({ isLogin: !this.state.isLogin })}
       />
       <Mutation
-        mutation={SIGNUP_MUTATION}
+        mutation={isLogin ? LOGIN_MUTATION : SIGNUP_MUTATION}
         variables={{ email, password, user_name, role: "STUDENT"}}
         onCompleted={data => this._confirm(data)}
         onError={(error) => console.log(error.message)}
@@ -74,7 +82,8 @@ class Login extends Component {
   }
 
    async _confirm(data) {
-      var token = jwt_decode(data.CreateUser.token)
+
+      var token = this.state.isLogin ? jwt_decode(data.Login.token) : jwt_decode(data.CreateUser.token)
       const items = [['userId', token.userId], ['role', token.role]]
       await AsyncStorage.multiSet(items)
       this.props.navigation.navigate('Home', {user: {userId: token.userId, role:  token.role}})

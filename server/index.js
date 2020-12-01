@@ -39,42 +39,23 @@ async function signup(object, params, ctx, resolveInfo) {
   }
 }
 
-/*async function login(object, params, ctx, resolveInfo) {
+async function login(object, params, ctx, resolveInfo) {
   const password = params.password
   delete params.password
 
-  const user = await ctx.models.users.findOne({
-  where: {
-    user_email: params.email
-  }
-  })
+  const user =  await User.findOne({ email: params.email }).exec();
 
   if (!user) {
     throw new Error('No such user found')
   }
-  const valid = await bcrypt.compare(password, user.user_password)
+  const valid = await bcrypt.compare(password, user.password)
   if (!valid) {
     throw new Error('Invalid password')
   }
   user.password = null
-
-  ctx.req.res.cookie("refresh-token", jwt.sign({ userId: user.user_id, role: user.user_role }, REFRESH_SECRET), { maxAge: 7 * 60 * 60 * 1000 })
-  ctx.req.res.cookie("access-token", jwt.sign({ userId: user.user_id, role: user.user_role }, ACCESS_SECRET), { maxAge: 15 * 60 * 1000 })
-  return user
+  const token = jwt.sign({ userId: user._id, role: user.role }, ACCESS_SECRET)
+  return {user, token}
 }
-async function getMe(object, params, ctx, resolveInfo) {
-  const user = await ctx.models.users.findOne({
-  where: {
-    user_id: params.user_id
-  }
-  })
-
-  if (!user) {
-    throw new Error('Error')
-  }
-
-  return user
-}*/
 
 
 
@@ -85,7 +66,7 @@ const schema = gql`
  
   type Mutation {
   	CreateUser(user_name: String! email: String! password: String! role: String! = "STUDENT"): AuthPayload
-  	Login(email: String! password: String!): User
+  	Login(email: String! password: String!): AuthPayload
   }
  
   type User {
@@ -112,6 +93,9 @@ const resolvers = {
    Mutation: {
    	CreateUser(object, params, ctx, resolveInfo) {
    		return signup(object, params, ctx, resolveInfo) 
+   	},
+   	Login(object, params, ctx, resolveInfo) {
+   		return login(object, params, ctx, resolveInfo) 
    	}
    }
  }
