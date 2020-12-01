@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { ACCESS_SECRET, REFRESH_SECRET, getUserId } = require('./utils')
 const app = express();
-/*const http = require('http').createServer(app);
+const http = require('http').createServer(app);
 const io = require("socket.io")(http, {
   cors: {
     origin: "http://localhost:19006",
@@ -15,25 +15,45 @@ const io = require("socket.io")(http, {
   }
 });
 
+var connectedUsers = {};
+
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.broadcast.emit('hi');
-   socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
-    io.emit('chat message', msg);
+  	console.log('a user connected');
+
+  socket.on('registration', (userId) => {
+	connectedUsers[userId]= socket.id
   });
+
+   socket.on('chat message', (msg) => {
+    io.to(socket.id).emit('chat message', msg);
+  });
+
    socket.on('disconnect', () => {
+   	console.log(connectedUsers)
     console.log('user disconnected');
   });
+
 });
 
 
 
 http.listen(3001, () => {
   console.log('listening on *:3001');
-});*/
+});
 
+
+/*
+
+socket.join(uid);
+console.log('user ' + socket.user + ' connected \n');
+now you can send private message to a user using following line:
+
+io.to(uid).emit();
+
+
+
+*/
 //TODO Add mongo unique index on user email
 mongoose.connect('mongodb://localhost/mychatdb', {useNewUrlParser: true});
 

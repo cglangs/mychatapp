@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './Homescreen'
 import Login from './Login'
 import Contacts from './Contacts'
+import Chat from './Chat'
 
 
 
@@ -22,6 +23,7 @@ class Navigation extends Component {
           />
           <Stack.Screen name="Contacts" component={Contacts} />
           <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Chat" component={Chat} />
         </Stack.Navigator>
       </NavigationContainer>
     );

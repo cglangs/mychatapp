@@ -12,26 +12,10 @@ const GET_CONTACTS_QUERY = gql`
   }
 `
 
-const Item = ({ item, onPress, style }) => (
-  <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
-    <Text style={styles.title}>{item.user_name}</Text>
-  </TouchableOpacity>
-);
-
-
-const renderItem = ({ item }) => {
-  const backgroundColor =  "#f9c2ff";
-    return (
-      <Item
-        item={item}
-        //onPress={/*() => navigate to chat component*/}
-        style={{ backgroundColor }}
-      />
-    );
-};
-
 
 class Contacts extends Component {
+
+
   render (){
     return (
       <Query query={GET_CONTACTS_QUERY} variables={{userId: this.props.route.params.user.userId}}>
@@ -41,7 +25,11 @@ class Contacts extends Component {
         return(
           <FlatList
             data={data.getContacts}
-            renderItem={renderItem}
+            renderItem={({ item, index, separators }) => (
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('Chat', {user: this.props.route.params.user})} style={styles.item}>
+              <Text style={styles.title}>{item.user_name}</Text>
+            </TouchableOpacity>
+            )}
             keyExtractor={(item) => item._id}
           />
         )
@@ -58,6 +46,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   item: {
+    backgroundColor: '#f9c2ff',
     padding: 20,
     marginVertical: 8,
     marginHorizontal: 16,

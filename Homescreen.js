@@ -2,21 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button  } from 'react-native';
 import React, { Component } from 'react'
  import AsyncStorage from '@react-native-async-storage/async-storage';
-//import {isLoggedIn, logoutUser} from './utils'
-import io from "socket.io-client"
 
-
-
-/*const socket = io("http://localhost:3001/", {
-  reconnectionDelayMax: 10000
-});
-
-socket.emit('chat message',"HEY BEBE")
-
-
-socket.on('chat message', function(msg){
-    console.log("Recieved message:", msg)
-})*/
 class HomeScreen extends Component {
 
   constructor(){
