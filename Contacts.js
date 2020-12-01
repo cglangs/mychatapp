@@ -26,7 +26,7 @@ class Contacts extends Component {
           <FlatList
             data={data.getContacts}
             renderItem={({ item, index, separators }) => (
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('Chat', {user: this.props.route.params.user})} style={styles.item}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('Chat', {user: this.props.route.params.user, destination: item._id})} style={styles.item}>
               <Text style={styles.title}>{item.user_name}</Text>
             </TouchableOpacity>
             )}

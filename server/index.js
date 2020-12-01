@@ -26,7 +26,9 @@ io.on('connection', (socket) => {
   });
 
    socket.on('chat message', (msg) => {
-    io.to(socket.id).emit('chat message', msg);
+   	if(connectedUsers.hasOwnProperty(msg.from)){
+   		io.to(connectedUsers[msg.to]).emit('chat message', msg);
+   	}
   });
 
    socket.on('disconnect', () => {

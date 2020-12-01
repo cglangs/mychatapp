@@ -9,10 +9,6 @@ const socket = io("http://localhost:3001/", {
 });
 
 
-socket.on('chat message', function(msg){
-    console.log("Recieved message:", msg)
-})
-
 class Chat extends React.Component {
 
  constructor(){
@@ -26,13 +22,15 @@ class Chat extends React.Component {
   	socket.emit('registration', this.props.route.params.user.userId)
   	socket.on('chat message', function(msg){
   		this.setState(prevState => ({
-  			messages: GiftedChat.append(prevState.messages, msg)
+  			messages: GiftedChat.append(prevState.messages, msg.message)
 		}))
 	}.bind(this))
   }
 
   onSend(msg) {
-  	socket.emit('chat message',msg)
+  	console.log(msg)
+  	socket.emit('chat message',{message: msg, to: this.props.route.params.destination, from: this.props.route.params.user.userId})
+  	this.setState(prevState => ({messages: GiftedChat.append(prevState.messages, msg)}))
   }
 
  
@@ -41,6 +39,7 @@ class Chat extends React.Component {
       <GiftedChat
       	onSend={msg => this.onSend(msg)}
         messages={this.state.messages}
+        user={{_id: this.props.route.params.user.userId}}
       />
     );
   }
