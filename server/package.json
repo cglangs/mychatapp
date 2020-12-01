@@ -13,7 +13,9 @@
     "apollo-server-express": "^2.19.0",
     "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
+    "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.10.16"
+    "mongoose": "^5.10.16",
+    "socket.io": "^3.0.3"
   }
 }

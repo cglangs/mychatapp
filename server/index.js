@@ -6,10 +6,35 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { ACCESS_SECRET, REFRESH_SECRET, getUserId } = require('./utils')
-
-
-
 const app = express();
+/*const http = require('http').createServer(app);
+const io = require("socket.io")(http, {
+  cors: {
+    origin: "http://localhost:19006",
+    methods: ["GET", "POST"]
+  }
+});
+
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  socket.broadcast.emit('hi');
+   socket.on('chat message', (msg) => {
+    console.log('message: ' + msg);
+    io.emit('chat message', msg);
+  });
+   socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+
+
+
+http.listen(3001, () => {
+  console.log('listening on *:3001');
+});*/
+
+//TODO Add mongo unique index on user email
 mongoose.connect('mongodb://localhost/mychatdb', {useNewUrlParser: true});
 
 
@@ -61,7 +86,7 @@ async function login(object, params, ctx, resolveInfo) {
 
 const schema = gql`
   type Query {
-  	me: User
+  	getContacts(userId: String!): [User]
   }
  
   type Mutation {
@@ -84,12 +109,12 @@ const schema = gql`
 `
 
 const resolvers = {
-  /*Query: {
-     hello: async (object, params, ctx, resolveInfo) => {
-        const result = await hw.find({})
-        return result[0].hw_string
+  Query: {
+     getContacts: async (object, params, ctx, resolveInfo) => {
+        const result = await User.find( { _id: { $ne: params.userId } } )
+        return result
       }
-    }*/
+    },
    Mutation: {
    	CreateUser(object, params, ctx, resolveInfo) {
    		return signup(object, params, ctx, resolveInfo) 

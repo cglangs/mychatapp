@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, Button} from 'react-native';
 import React, { Component } from 'react'
 import gql from 'graphql-tag';
-import {Query, Mutation} from 'react-apollo';
+import {Mutation} from 'react-apollo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 

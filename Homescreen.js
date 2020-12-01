@@ -3,9 +3,20 @@ import { StyleSheet, Text, View, Button  } from 'react-native';
 import React, { Component } from 'react'
  import AsyncStorage from '@react-native-async-storage/async-storage';
 //import {isLoggedIn, logoutUser} from './utils'
+import io from "socket.io-client"
 
 
 
+/*const socket = io("http://localhost:3001/", {
+  reconnectionDelayMax: 10000
+});
+
+socket.emit('chat message',"HEY BEBE")
+
+
+socket.on('chat message', function(msg){
+    console.log("Recieved message:", msg)
+})*/
 class HomeScreen extends Component {
 
   constructor(){
@@ -17,7 +28,6 @@ class HomeScreen extends Component {
       }
     }
     this.state = this.baseState
-
   }
 
   componentDidUpdate(prevProps, prevState){
@@ -44,6 +54,10 @@ class HomeScreen extends Component {
   render (){
     return (
       <View  style={styles.container}>
+      {this.state.user.userId && (<Button
+        title="Contacts"
+        onPress={() =>{this.props.navigation.navigate('Contacts', {user: this.state.user})}}
+      />)}
       <Button
         title={this.state.user.userId ? "Logout" : "Login"}
         onPress={() =>{this.state.user.userId ? this.logoutUser() : this.props.navigation.navigate('Login')}} 
