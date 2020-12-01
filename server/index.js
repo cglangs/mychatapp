@@ -95,6 +95,7 @@ const schema = gql`
   }
  
   type User {
+  	_id: String!
   	user_name: String!
   	email: String!
   	password: String!
