@@ -9,15 +9,17 @@ import gql from 'graphql-tag';
 const GET_CONVERSATION_QUERY = gql`
   query conversationQuery($userId: String!, $otherUserId: String!) {
     getConversation(userId: $userId, otherUserId: $otherUserId) {
-	  	conversation_starter
-	  	conversation_partner
+    	_id
 	  	messages{
 	  		text
+	  		user{
+	  			_id
+	  		}
+
 	  	}
     }
   }
 `
-
 
 const socket = io("http://localhost:3001/", {
   reconnectionDelayMax: 10000
@@ -42,9 +44,8 @@ class Chat extends React.Component {
 	}.bind(this))
   }
 
-  onSend(msg) {
-  	socket.emit('chat message',{message: msg, to: this.props.route.params.destination, from: this.props.route.params.user.userId})
-  	this.setState(prevState => ({messages: GiftedChat.append(prevState.messages, msg)}))
+  onSend(msg, conversationId) {
+  	socket.emit('chat message',{message: msg, cId: conversationId, to: this.props.route.params.destination, from: this.props.route.params.user.userId})
   }
 
  
@@ -56,8 +57,8 @@ class Chat extends React.Component {
         if (error) return <Text>Error</Text>
         return(
       <GiftedChat
-      	onSend={msg => this.onSend(msg)}
-        messages={this.state.messages}
+      	onSend={msg => this.onSend(msg, data.getConversation._id)}
+        messages={data.getConversation.messages.concat(this.state.messages)}
         user={{_id: this.props.route.params.user.userId}}
       />
     );

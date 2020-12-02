@@ -30,24 +30,14 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-const messageSchema  = new mongoose.Schema({
-  sender: String,
-  receiver: String,
-  text: String
-});
-
-const Message = mongoose.model('Message', messageSchema);
-
 
 const conversationSchema  = new mongoose.Schema({
-	messages: [messageSchema],
+	messages: [Object],
 	conversation_starter: String,
 	conversation_partner: String
 });
 
 const Conversation = mongoose.model('Conversation', conversationSchema);
-
-
 
 
 
@@ -60,7 +50,11 @@ io.on('connection', (socket) => {
 
    socket.on('chat message', (msg) => {
    	if(connectedUsers.hasOwnProperty(msg.from)){
-   		io.to(connectedUsers[msg.to]).emit('chat message', msg);
+   		Conversation.update({ _id: mongoose.Types.ObjectId(msg.cId) }, { $push: { messages: msg.message[0] } }).then((result) => {
+  				io.to(connectedUsers[msg.to]).to(socket.id).emit('chat message', msg);
+			}).catch((error) => {
+  			console.log(error)
+		})
    	}
   });
 
@@ -76,20 +70,6 @@ io.on('connection', (socket) => {
 http.listen(3001, () => {
   console.log('listening on *:3001');
 });
-
-
-/*
-
-socket.join(uid);
-console.log('user ' + socket.user + ' connected \n');
-now you can send private message to a user using following line:
-
-io.to(uid).emit();
-
-
-
-*/
-//TODO Add mongo unique index on user email
 
 
 async function signup(object, params, ctx, resolveInfo) {
@@ -153,15 +133,15 @@ const schema = gql`
   }
 
   type Conversation{
+  	_id: String
   	conversation_starter: String
   	conversation_partner: String
   	messages: [Message]
   }
 
   type Message{
-  	sender: String!
-  	receiver: String!
-  	text: String!
+	text: String!
+	user: User
   }
 
 `
@@ -169,16 +149,22 @@ const schema = gql`
 const resolvers = {
   Query: {
      getContacts: async (object, params, ctx, resolveInfo) => {
+     	console.log("userid:", params.userId)
         const result = await User.find( { _id: { $ne: params.userId } } )
         return result
       },
       getConversation: async (object, params, ctx, resolveInfo) => {       
-        const result = await Conversation.find( {
+        var result = await Conversation.findOne( {
     	$or: [
 	        { $and: [ { conversation_starter: params.userId }, { conversation_partner: params.otherUserId } ] },
 	        { $and: [ { conversation_starter: params.otherUserId }, { conversation_partner: params.userId } ] }
     	]
 		} )
+		if(!result){
+			const newConversation = new Conversation({ conversation_starter: params.userId, conversation_partner: params.otherUserId, messages: [] })
+			result = await newConversation.save()
+		}
+		console.log("FINAL RESULT:", result)
 		return result
       },
     },
