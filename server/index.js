@@ -18,6 +18,39 @@ const io = require("socket.io")(http, {
 var connectedUsers = {};
 
 
+mongoose.connect('mongodb://localhost/mychatdb', {useNewUrlParser: true});
+
+
+const userSchema = new mongoose.Schema({
+  user_name: String,
+  password: String,
+  email: String,
+  role: String
+});
+
+const User = mongoose.model('User', userSchema);
+
+const messageSchema  = new mongoose.Schema({
+  sender: String,
+  receiver: String,
+  text: String
+});
+
+const Message = mongoose.model('Message', messageSchema);
+
+
+const conversationSchema  = new mongoose.Schema({
+	messages: [messageSchema],
+	conversation_starter: String,
+	conversation_partner: String
+});
+
+const Conversation = mongoose.model('Conversation', conversationSchema);
+
+
+
+
+
 io.on('connection', (socket) => {
   	console.log('a user connected');
 
@@ -57,17 +90,6 @@ io.to(uid).emit();
 
 */
 //TODO Add mongo unique index on user email
-mongoose.connect('mongodb://localhost/mychatdb', {useNewUrlParser: true});
-
-
-const userSchema = new mongoose.Schema({
-  user_name: String,
-  password: String,
-  email: String,
-  role: String
-});
-
-const User = mongoose.model('User', userSchema);
 
 
 async function signup(object, params, ctx, resolveInfo) {
@@ -109,6 +131,7 @@ async function login(object, params, ctx, resolveInfo) {
 const schema = gql`
   type Query {
   	getContacts(userId: String!): [User]
+  	getConversation(userId: String!, otherUserId: String!) : Conversation
   }
  
   type Mutation {
@@ -129,6 +152,18 @@ const schema = gql`
   	user: User!
   }
 
+  type Conversation{
+  	conversation_starter: String
+  	conversation_partner: String
+  	messages: [Message]
+  }
+
+  type Message{
+  	sender: String!
+  	receiver: String!
+  	text: String!
+  }
+
 `
 
 const resolvers = {
@@ -136,7 +171,16 @@ const resolvers = {
      getContacts: async (object, params, ctx, resolveInfo) => {
         const result = await User.find( { _id: { $ne: params.userId } } )
         return result
-      }
+      },
+      getConversation: async (object, params, ctx, resolveInfo) => {       
+        const result = await Conversation.find( {
+    	$or: [
+	        { $and: [ { conversation_starter: params.userId }, { conversation_partner: params.otherUserId } ] },
+	        { $and: [ { conversation_starter: params.otherUserId }, { conversation_partner: params.userId } ] }
+    	]
+		} )
+		return result
+      },
     },
    Mutation: {
    	CreateUser(object, params, ctx, resolveInfo) {
