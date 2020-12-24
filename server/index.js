@@ -180,14 +180,9 @@ const resolvers = {
 
 var corsOptions = {
   origin: 'http://localhost:19006',
-  credentials: true // <-- REQUIRED backend setting
+  credentials: true
 };
 
-
-
-//app.use(cors(corsOptions));
-
-//app.use(cookieParser())
 
 const server = new ApolloServer({
   introspection: true,
@@ -202,7 +197,6 @@ const server = new ApolloServer({
 });
 
 
-//server.applyMiddleware({ app });
 server.applyMiddleware({ app, cors: corsOptions });
 
 
